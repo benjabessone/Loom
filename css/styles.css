@@ -71,7 +71,7 @@
 }
 
 .duration-300 {
-    transition-duration: 300ms;
+    transition: var(--transition-normal);
 }
 
 .hover\:text-white:hover {
@@ -89,6 +89,7 @@
 }
 
 :root {
+    /* Colores principales */
     --dark-bg: #0a0a14;
     --card-bg: #121224;
     --accent: #6e44ff;
@@ -96,9 +97,24 @@
     --accent-secondary: #00d2df;
     --text: #f0f0f5;
     --text-secondary: #b0b0c0;
-    --transition: all 0.3s ease;
+    
+    /* Redes sociales */
     --whatsapp: #25D366;
     --instagram: #E1306C;
+    
+    /* Transiciones y animaciones */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Gradientes reutilizables */
+    --gradient-primary: linear-gradient(45deg, var(--accent), var(--accent-secondary));
+    --gradient-horizontal: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+    
+    /* Espaciado */
+    --header-height: 80px;
+    --border-radius: 12px;
+    --shadow: 0 10px 30px rgba(110, 68, 255, 0.1);
 }
 
 * {
@@ -121,7 +137,7 @@ html {
 
 /* Transiciones suaves solo para elementos interactivos específicos */
 a, button, .btn, .feature-card, .step, input, textarea, select {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-normal);
 }
 
 /* Sin transiciones para elementos estructurales */
@@ -131,7 +147,7 @@ html, body, .hero, .hero-content, .hero-grid::before, .chat-message, section {
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #0a0a14;
+    background-color: var(--dark-bg);
     background-image: url('../images/fondo.png');
     background-attachment: fixed;
     background-position: center center;
@@ -140,7 +156,7 @@ body {
     color: var(--text);
     line-height: 1.6;
     overflow-x: hidden;
-    padding-top: 80px; /* Compensar header fijo */
+    padding-top: var(--header-height);
 }
 
 /* Patrón alternado de fondos */
@@ -169,7 +185,7 @@ h1, h2, h3, h4 {
 
 h1 {
     font-size: 4rem;
-    background: linear-gradient(45deg, var(--accent), var(--accent-secondary));
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -190,7 +206,7 @@ h2::after {
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+    background: var(--gradient-horizontal);
     border-radius: 2px;
 }
 
@@ -220,7 +236,7 @@ p {
     transition: var(--transition);
     border: none;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(110, 68, 255, 0.3);
+    box-shadow: var(--shadow);
 }
 
 .btn:hover {
@@ -350,7 +366,7 @@ nav {
     height: 3px;
     background: var(--accent);
     margin: 5px 0;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
     border-radius: 2px;
     transform-origin: center;
 }
@@ -679,7 +695,7 @@ footer {
     background: transparent;
     border: none;
     border-radius: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-normal);
     cursor: pointer;
     position: relative;
     text-decoration: none;
@@ -708,7 +724,7 @@ footer {
     justify-content: center;
     margin-right: 20px;
     font-size: 1.8rem;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
     position: relative;
     z-index: 2;
 }

@@ -1,5 +1,39 @@
-// Función de desplazamiento suave mejorada con mejor rendimiento
-function smoothScroll(target, offset = 80) {
+// Constantes y configuración
+const CONFIG = {
+    HEADER_OFFSET: 80,
+    SCROLL_THRESHOLD: 10,
+    THROTTLE_DELAY: 10
+};
+
+// Utilidades
+const Utils = {
+    // Función de throttling para optimizar eventos
+    throttle(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            if (timeoutId) return;
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+                timeoutId = null;
+            }, delay);
+        };
+    },
+    
+    // Verificar si un elemento es visible
+    isElementVisible(element) {
+        const rect = element.getBoundingClientRect();
+        return rect.height > 0 && rect.width > 0;
+    },
+    
+    // Obtener altura del header
+    getHeaderHeight() {
+        const header = document.querySelector('header');
+        return header ? header.offsetHeight : CONFIG.HEADER_OFFSET;
+    }
+};
+
+// Función de desplazamiento suave optimizada
+function smoothScroll(target, offset = CONFIG.HEADER_OFFSET) {
     try {
         const element = document.querySelector(target);
         if (!element) {
@@ -7,25 +41,19 @@ function smoothScroll(target, offset = 80) {
             return false;
         }
         
-        // Verificar si el elemento es visible
-        const rect = element.getBoundingClientRect();
-        if (rect.height === 0 && rect.width === 0) {
+        if (!Utils.isElementVisible(element)) {
             console.warn('Elemento no visible:', target);
             return false;
         }
         
-        // Calcular posición con offset del header
-        const header = document.querySelector('header');
-        const headerHeight = header ? header.offsetHeight : offset;
+        const headerHeight = Utils.getHeaderHeight();
         const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
         const targetPosition = elementTop - headerHeight;
         
-        // Si la distancia es muy pequeña, no hacer scroll
-        if (Math.abs(targetPosition - window.pageYOffset) < 10) {
+        if (Math.abs(targetPosition - window.pageYOffset) < CONFIG.SCROLL_THRESHOLD) {
             return true;
         }
         
-        // Usar scroll suave nativo con manejo de errores
         try {
             window.scrollTo({
                 top: targetPosition,
@@ -34,13 +62,11 @@ function smoothScroll(target, offset = 80) {
             return true;
         } catch (scrollError) {
             console.error('Error en scroll nativo:', scrollError);
-            // Fallback a scroll básico
             window.scrollTo(0, targetPosition);
             return true;
         }
     } catch (error) {
         console.error('Error en smoothScroll:', error);
-        // Fallback a scrollIntoView
         try {
             const element = document.querySelector(target);
             if (element) {
@@ -60,101 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar animaciones de scroll
     initScrollAnimations();
     
-    // Mobile menu toggle optimizado
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
+    // Gestión del menú móvil
+    initMobileMenu();
     
-    if (menuToggle && navLinks) {
-        // Función para cerrar el menú
-        const closeMobileMenu = () => {
-            navLinks.classList.remove('active');
-            menuToggle.classList.remove('active');
-            menuToggle.setAttribute('aria-expanded', 'false');
-        };
-        
-        // Toggle del menú
-        menuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isExpanded = navLinks.classList.contains('active');
-            navLinks.classList.toggle('active');
-            menuToggle.classList.toggle('active');
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-        });
-        
-        // Cerrar menú al hacer clic fuera (con throttling)
-        let clickTimeout;
-        document.addEventListener('click', function(e) {
-            if (clickTimeout) return;
-            clickTimeout = setTimeout(() => {
-                if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
-                    closeMobileMenu();
-                }
-                clickTimeout = null;
-            }, 10);
-        });
-        
-        // Cerrar menú al hacer clic en un enlace (delegación de eventos)
-        navLinks.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A') {
-                closeMobileMenu();
-            }
-        });
-        
-        // Cerrar con tecla Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && navLinks.classList.contains('active')) {
-                closeMobileMenu();
-            }
-        });
-    }
-    
-    // Asignar eventos a todos los enlaces de scroll suave
-    document.querySelectorAll('.smooth-scroll').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const href = this.getAttribute('href');
-            
-            if (href.includes('#')) {
-                const [page, anchor] = href.split('#');
-                
-                if (page && page !== window.location.pathname) {
-                    // Si estamos en otra página, navegar a la página principal con el ancla
-                    window.location.href = href;
-                } else {
-                    // Si estamos en la misma página, hacer scroll suave
-                    smoothScroll('#' + anchor);
-                }
-            } else {
-                // Enlaces normales
-                window.location.href = href;
-            }
-        });
-    });
-    
-    // Actualizar enlaces activos en la navegación
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            
-            if (href.startsWith('#')) {
-                // Anclas locales - hacer scroll suave
-                e.preventDefault();
-                smoothScroll(href);
-            } else if (href.includes('#')) {
-                const [page, anchor] = href.split('#');
-                if (page && page !== window.location.pathname) {
-                    // Si estamos en otra página, navegar a la página principal con el ancla
-                    window.location.href = href;
-                }
-            } else if (href.startsWith('/')) {
-                // Enlaces que apuntan a otras páginas
-                window.location.href = href;
-            } else {
-                // Anclas locales en la página actual
-                smoothScroll(href);
-            }
-        });
-    });
+    // Inicializar gestión de enlaces
+    initNavigationLinks();
     
     // Intersection Observer optimizado para animaciones
     const observerOptions = {
@@ -610,8 +546,8 @@ function initScrollAnimations() {
         
         function updateParallax() {
             const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.3; // Reducido para mejor rendimiento
-            hero.style.transform = `translate3d(0, ${rate}px, 0)`; // Usar translate3d para aceleración por hardware
+            const rate = scrolled * -0.3;
+            hero.style.transform = `translate3d(0, ${rate}px, 0)`;
             ticking = false;
         }
         
@@ -623,3 +559,81 @@ function initScrollAnimations() {
         }, { passive: true });
     }
 }
+
+// Función para inicializar el menú móvil
+function initMobileMenu() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (!menuToggle || !navLinks) return;
+    
+    const closeMobileMenu = () => {
+        navLinks.classList.remove('active');
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+    };
+    
+    // Toggle del menú
+    menuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isExpanded = navLinks.classList.contains('active');
+        navLinks.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+        menuToggle.setAttribute('aria-expanded', !isExpanded);
+    });
+    
+    // Cerrar menú al hacer clic fuera (con throttling)
+    const handleOutsideClick = Utils.throttle((e) => {
+        if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+            closeMobileMenu();
+        }
+    }, CONFIG.THROTTLE_DELAY);
+    
+    document.addEventListener('click', handleOutsideClick);
+    
+    // Cerrar menú al hacer clic en un enlace
+    navLinks.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') {
+            closeMobileMenu();
+        }
+    });
+    
+    // Cerrar con tecla Escape
+     document.addEventListener('keydown', function(e) {
+         if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+             closeMobileMenu();
+         }
+     });
+ }
+ 
+ // Función para manejar la navegación de enlaces
+ function initNavigationLinks() {
+     // Función reutilizable para manejar clics en enlaces
+     const handleLinkClick = (e) => {
+         const href = e.target.getAttribute('href');
+         if (!href) return;
+         
+         if (href.startsWith('#')) {
+             e.preventDefault();
+             smoothScroll(href);
+         } else if (href.includes('#')) {
+             const [page, anchor] = href.split('#');
+             if (page && page !== window.location.pathname) {
+                 window.location.href = href;
+             } else {
+                 e.preventDefault();
+                 smoothScroll('#' + anchor);
+             }
+         }
+     };
+     
+     // Aplicar a enlaces de scroll suave
+     document.querySelectorAll('.smooth-scroll').forEach(link => {
+         link.addEventListener('click', handleLinkClick);
+     });
+     
+     // Aplicar a enlaces de navegación
+     document.querySelectorAll('.nav-links a').forEach(link => {
+         link.addEventListener('click', handleLinkClick);
+     });
+ }

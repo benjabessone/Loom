@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test de Navegación</title>
+    <style>
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 10px 20px;
+            display: inline-block;
+            margin: 0 10px;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff6b35;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+        }
+        
+        section {
+            height: 500px;
+            padding: 50px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#inicio" class="nav-link">Inicio</a>
+        <a href="#servicios" class="nav-link">Servicios</a>
+        <a href="#testimonios" class="nav-link">Testimonios</a>
+        <a href="#contacto" class="nav-link">Contacto</a>
+    </nav>
+    
+    <section id="inicio">
+        <h2>Sección Inicio</h2>
+        <p>Esta es la sección de inicio.</p>
+    </section>
+    
+    <section id="servicios">
+        <h2>Sección Servicios</h2>
+        <p>Esta es la sección de servicios.</p>
+    </section>
+    
+    <section id="testimonios">
+        <h2>Sección Testimonios</h2>
+        <p>Esta es la sección de testimonios.</p>
+    </section>
+    
+    <section id="contacto">
+        <h2>Sección Contacto</h2>
+        <p>Esta es la sección de contacto.</p>
+    </section>
+    
+    <script>
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        // Función para actualizar el enlace activo
+        function updateActiveNavLink(targetId) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === targetId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Desplazamiento suave y actualización del enlace activo
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    updateActiveNavLink(targetId);
+                }
+            });
+        });
+        
+        // Actualizar enlace activo basado en scroll
+        function updateNavOnScroll() {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = '#' + section.getAttribute('id');
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    updateActiveNavLink(sectionId);
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', updateNavOnScroll);
+        
+        // Establecer enlace inicial como activo
+        updateActiveNavLink('#inicio');
+    </script>
+</body>
+</html>

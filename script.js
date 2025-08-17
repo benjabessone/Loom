@@ -122,10 +122,10 @@ function handleHeaderScroll() {
     const scrollY = window.scrollY;
     
     if (scrollY > 100) {
-        header.style.background = 'rgba(10, 10, 20, 0.98)';
+        header.style.background = 'rgba(25, 25, 40, 0.98)';
         header.style.boxShadow = '0 2px 20px rgba(110, 68, 255, 0.1)';
     } else {
-        header.style.background = 'rgba(10, 10, 20, 0.95)';
+        header.style.background = 'rgba(25, 25, 40, 0.95)';
         header.style.boxShadow = 'none';
     }
 }

@@ -958,13 +958,13 @@ fieldset {
     outline-offset: 2px;
 }
 
-/* Mobile optimizations - Disable problematic animations */
+/* Mobile optimizations - Subtle animations for better UX */
 @media (max-width: 767.98px), (hover: none) {
     .floating-card {
         position: static !important;
-        animation: none !important;
+        animation: mobileGlow 3s ease-in-out infinite !important;
         transform: none !important;
-        transition: none !important;
+        transition: all 0.3s ease !important;
         will-change: auto !important;
         display: inline-block !important;
         margin: 0.5rem !important;
@@ -985,19 +985,91 @@ fieldset {
         bottom: auto !important;
         transform: none !important;
         animation: none !important;
-        transition: none !important;
+        transition: all 0.3s ease !important;
         will-change: auto !important;
+    }
+    
+    /* Animación sutil de brillo para móvil */
+    @keyframes mobileGlow {
+        0%, 100% {
+            box-shadow: 0 4px 15px rgba(110, 68, 255, 0.1);
+        }
+        50% {
+            box-shadow: 0 4px 25px rgba(110, 68, 255, 0.2);
+        }
+    }
+    
+    /* Animación de entrada suave para elementos */
+    .service-card, .testimonial-card {
+        animation: mobileSlideIn 0.6s ease-out !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+    
+    @keyframes mobileSlideIn {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Animación de pulso sutil para botones */
+    .btn-primary, .btn-secondary {
+        animation: mobilePulse 2s ease-in-out infinite !important;
+    }
+    
+    @keyframes mobilePulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.02);
+        }
+    }
+    
+    /* Animación de entrada para el hero */
+    .hero-content {
+        animation: mobileHeroFade 1s ease-out !important;
+    }
+    
+    @keyframes mobileHeroFade {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Animación suave para las secciones */
+    .section {
+        animation: mobileSectionFade 0.8s ease-out !important;
+    }
+    
+    @keyframes mobileSectionFade {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
     }
     
     /* Force remove any JavaScript applied styles */
     .floating-card[style] {
         transform: none !important;
-        animation: none !important;
-        transition: none !important;
+        animation: mobileGlow 3s ease-in-out infinite !important;
+        transition: all 0.3s ease !important;
         position: static !important;
     }
     
-    /* Disable all animations on mobile */
+    /* Disable problematic animations on mobile */
     .hero-graphic {
         animation: none !important;
         transform: none !important;

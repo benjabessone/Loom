@@ -301,11 +301,9 @@ function enhanceFloatingCards() {
         cards.forEach(card => {
             // Remove all inline styles that could interfere
             card.removeAttribute('style');
-            // Force CSS-only styling with more aggressive rules
+            // Allow subtle CSS animations but disable problematic transforms
             card.style.cssText = `
                 transform: none !important; 
-                animation: none !important; 
-                transition: none !important; 
                 position: static !important;
                 top: auto !important;
                 left: auto !important;

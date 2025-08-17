@@ -301,8 +301,21 @@ function enhanceFloatingCards() {
         cards.forEach(card => {
             // Remove all inline styles that could interfere
             card.removeAttribute('style');
-            // Force CSS-only styling
-            card.style.cssText = 'transform: none !important; animation: none !important; transition: none !important; position: static !important;';
+            // Force CSS-only styling with more aggressive rules
+            card.style.cssText = `
+                transform: none !important; 
+                animation: none !important; 
+                transition: none !important; 
+                position: static !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                will-change: auto !important;
+            `;
+            
+            // Remove any event listeners that might interfere
+            card.replaceWith(card.cloneNode(true));
         });
         return;
     }
@@ -379,18 +392,31 @@ function rotateTestimonials() {
 
 // Parallax effect for hero section
 function addParallaxEffect() {
+    // Disable parallax on mobile devices to prevent performance issues
+    if (window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches) {
+        return;
+    }
+    
     const hero = document.querySelector('.hero');
     const heroContent = document.querySelector('.hero-content');
     const heroImage = document.querySelector('.hero-image');
     
-    window.addEventListener('scroll', () => {
+    // Throttle scroll events for better performance
+    const throttledScroll = throttle(() => {
+        // Double-check mobile state on each scroll
+        if (window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches) {
+            return;
+        }
+        
         const scrolled = window.pageYOffset;
         const rate = scrolled * -0.5;
         
         if (heroImage) {
             heroImage.style.transform = `translateY(${rate}px)`;
         }
-    });
+    }, 16); // ~60fps
+    
+    window.addEventListener('scroll', throttledScroll);
 }
 
 // Initialize everything when DOM is loaded
@@ -480,6 +506,7 @@ function init() {
         enhanceFloatingCards();
         createObserver();
         rotateTestimonials();
+        addParallaxEffect();
     }, 250));
     
     // Add loading animation

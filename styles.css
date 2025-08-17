@@ -959,7 +959,7 @@ fieldset {
 }
 
 /* Mobile optimizations - Disable problematic animations */
-@media (max-width: 767.98px) {
+@media (max-width: 767.98px), (hover: none) {
     .floating-card {
         position: static !important;
         animation: none !important;
@@ -970,6 +970,11 @@ fieldset {
         margin: 0.5rem !important;
         float: none !important;
         clear: both !important;
+        /* Prevent any movement */
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
     }
     
     .card-1, .card-2, .card-3 {
@@ -988,6 +993,19 @@ fieldset {
     .floating-card[style] {
         transform: none !important;
         animation: none !important;
+        transition: none !important;
+        position: static !important;
+    }
+    
+    /* Disable all animations on mobile */
+    .hero-graphic {
+        animation: none !important;
+        transform: none !important;
+    }
+    
+    /* Ensure hero image doesn't move */
+    .hero-image {
+        transform: none !important;
         transition: none !important;
     }
 }

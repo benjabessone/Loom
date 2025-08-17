@@ -132,6 +132,21 @@ function handleHeaderScroll() {
 
 // Intersection Observer for animations
 function createObserver() {
+    // Skip animations on mobile devices to prevent flickering
+    if (window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches) {
+        // On mobile, just make elements visible immediately
+        const animatedElements = document.querySelectorAll(
+            '.service-card, .testimonial-card, .section-header, .hero-content'
+        );
+        
+        animatedElements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+            el.style.transition = 'none';
+        });
+        return;
+    }
+    
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -281,27 +296,32 @@ function handleFormSubmission(e) {
 function enhanceFloatingCards() {
     const cards = document.querySelectorAll('.floating-card');
     
+    // Force clear all inline styles on mobile
+    if (window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches) {
+        cards.forEach(card => {
+            // Remove all inline styles that could interfere
+            card.removeAttribute('style');
+            // Force CSS-only styling
+            card.style.cssText = 'transform: none !important; animation: none !important; transition: none !important; position: static !important;';
+        });
+        return;
+    }
+    
     cards.forEach((card, index) => {
-        // Add mouse move effect
-        card.addEventListener('mouseenter', () => {
-            card.style.transform = 'translateY(-10px) scale(1.05)';
-            card.style.transition = 'all 0.3s ease';
-        });
+        // Clear any mobile styles first
+        card.removeAttribute('style');
         
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = '';
-        });
-        
-        // Add random floating animation
-        setInterval(() => {
-            const randomY = Math.random() * 10 - 5;
-            const randomX = Math.random() * 10 - 5;
-            card.style.transform += ` translate(${randomX}px, ${randomY}px)`;
+        // Only add hover effects on desktop
+        if (window.matchMedia('(hover: hover)').matches) {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.05)';
+                card.style.transition = 'all 0.3s ease';
+            });
             
-            setTimeout(() => {
-                card.style.transform = card.style.transform.replace(/translate\([^)]*\)/, '');
-            }, 2000);
-        }, 5000 + index * 1000);
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        }
     });
 }
 
@@ -323,6 +343,17 @@ function enhanceServiceCards() {
 
 // Testimonial cards rotation
 function rotateTestimonials() {
+    // Skip rotation animations on mobile devices to prevent flickering
+    if (window.innerWidth <= 768 || window.matchMedia('(hover: none)').matches) {
+        const testimonialCards = document.querySelectorAll('.testimonial-card');
+        testimonialCards.forEach(card => {
+            card.style.transform = 'none';
+            card.style.borderColor = '';
+            card.style.transition = 'none';
+        });
+        return;
+    }
+    
     const testimonialCards = document.querySelectorAll('.testimonial-card');
     let currentIndex = 0;
     
@@ -441,11 +472,15 @@ function init() {
     });
     
     // Handle window resize
-    window.addEventListener('resize', () => {
+    window.addEventListener('resize', throttle(() => {
         if (window.innerWidth > 768) {
             closeMobileNav();
         }
-    });
+        // Re-apply mobile optimizations on resize
+        enhanceFloatingCards();
+        createObserver();
+        rotateTestimonials();
+    }, 250));
     
     // Add loading animation
     document.body.style.opacity = '0';

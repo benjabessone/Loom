@@ -928,6 +928,22 @@ fieldset {
     animation: fadeInUp 0.6s ease-out;
 }
 
+/* Disable animations on mobile to prevent flickering */
+@media (max-width: 768px), (hover: none) {
+    .fade-in-up {
+        animation: none !important;
+    }
+    
+    .service-card,
+    .testimonial-card,
+    .section-header,
+    .hero-content {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        transition: none !important;
+    }
+}
+
 /* Smooth scrolling for older browsers */
 @media (prefers-reduced-motion: no-preference) {
     html {
@@ -940,6 +956,40 @@ fieldset {
 .nav-link:focus {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+}
+
+/* Mobile optimizations - Disable problematic animations */
+@media (max-width: 767.98px) {
+    .floating-card {
+        position: static !important;
+        animation: none !important;
+        transform: none !important;
+        transition: none !important;
+        will-change: auto !important;
+        display: inline-block !important;
+        margin: 0.5rem !important;
+        float: none !important;
+        clear: both !important;
+    }
+    
+    .card-1, .card-2, .card-3 {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+        will-change: auto !important;
+    }
+    
+    /* Force remove any JavaScript applied styles */
+    .floating-card[style] {
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+    }
 }
 
 /* Print styles */

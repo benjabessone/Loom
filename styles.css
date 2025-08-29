@@ -562,11 +562,36 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
 }
 
-/* Contact Buttons Styles */
+/* Contact Section Styles */
+.contact-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-intro h3 {
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.contact-intro p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
 .contact-buttons {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    width: 100%;
     max-width: 400px;
 }
 
@@ -617,8 +642,21 @@ h1, h2, h3, h4, h5, h6 {
     flex-shrink: 0;
 }
 
-/* Responsive adjustments for contact buttons */
+/* Responsive adjustments for contact section */
 @media (max-width: 768px) {
+    .contact-content {
+        gap: 2rem;
+        max-width: 100%;
+    }
+    
+    .contact-intro h3 {
+        font-size: 1.5rem;
+    }
+    
+    .contact-intro p {
+        font-size: 1rem;
+    }
+    
     .contact-buttons {
         max-width: 100%;
     }
@@ -627,6 +665,19 @@ h1, h2, h3, h4, h5, h6 {
     .btn-instagram {
         padding: 14px 20px;
         font-size: 15px;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 769px) {
+    .contact-buttons {
+        flex-direction: row;
+        gap: 2rem;
+    }
+    
+    .btn-whatsapp,
+    .btn-instagram {
+        flex: 1;
         justify-content: center;
     }
 }

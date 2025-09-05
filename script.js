@@ -4,6 +4,7 @@ const navMenu = document.querySelector('.nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 const contactForm = document.querySelector('.contact-form');
 const header = document.querySelector('.header');
+const faqItems = document.querySelectorAll('.faq-item');
 
 // Mobile Navigation Toggle
 function toggleMobileNav() {
@@ -417,12 +418,29 @@ function addParallaxEffect() {
     window.addEventListener('scroll', throttledScroll);
 }
 
+// FAQ Functionality
+function toggleFaqItem() {
+    this.classList.toggle('active');
+}
+
 // Initialize everything when DOM is loaded
 function init() {
     console.log('Initializing landing page...');
     console.log('Nav links found:', navLinks.length);
     console.log('Nav toggle found:', !!navToggle);
     console.log('Header found:', !!header);
+    
+    // Initialize FAQ items
+    if (faqItems) {
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            if (question) {
+                question.addEventListener('click', function() {
+                    item.classList.toggle('active');
+                });
+            }
+        });
+    }
     
     // Navigation
     if (navToggle) {
